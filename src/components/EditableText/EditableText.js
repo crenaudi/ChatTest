@@ -1,14 +1,61 @@
 import React, { useCallback, useRef, useMemo, useState } from "react"
 import { EditorState } from 'draft-js';
 import Editor from '@draft-js-plugins/editor';
-import createToolbarPlugin from '@draft-js-plugins/static-toolbar';
+import createToolbarPlugin, {
+  Separator,
+} from '@draft-js-plugins/static-toolbar';
+import {
+  ItalicButton,
+  BoldButton,
+  UnderlineButton,
+  CodeButton,
+  HeadlineOneButton,
+  HeadlineTwoButton,
+  HeadlineThreeButton,
+  UnorderedListButton
+} from '@draft-js-plugins/buttons';
 import createMentionPlugin, {
   defaultSuggestionsFilter,
 } from '@draft-js-plugins/mention'
 import mentions from "./partials/mentions";
 
 import './EditableText.style.scss'
-//import Toolbar from "@draft-js-plugins/static-toolbar/lib/components/Toolbar";
+
+const HeadlinesPicker = (props) => {
+  //componentDidMount() {
+  //  setTimeout(() => {
+  //    window.addEventListener('click', this.onWindowClick);
+  //  });
+  //}
+//
+  //componentWillUnmount() {
+  //  window.removeEventListener('click', this.onWindowClick);
+  //}
+
+  //onWindowClick = () =>
+  //  // Call `onOverrideContent` again with `undefined`
+  //  // so the toolbar can show its regular content again.
+  //  props.onOverrideContent(undefined);
+
+    const buttons = [HeadlineOneButton, HeadlineTwoButton, HeadlineThreeButton];
+    return (
+      <div>
+        {buttons.map((Button, i) => (
+          // eslint-disable-next-line
+          <Button key={i} { ...props } />
+        ))}
+      </div>
+    )
+}
+
+const HeadlinesButton = (props) => {
+  const onClick = () => props.onOverrideContent(HeadlinesPicker);
+
+  return (
+    <div className=''>
+    </div>
+  )
+}
 
 const EditableText = () => {
   const [editorState, setEditorState] = React.useState(EditorState.createEmpty())
@@ -19,18 +66,23 @@ const EditableText = () => {
   const [open, setOpen] = useState(false);
   const onOpenChange = useCallback(() => setOpen(!open), [open, setOpen])
   const [suggestions, setSuggestions] = useState(mentions);
-  const { MentionSuggestions, Toolbar, plugins } = useMemo(() => {
-    const mentionPlugin = createMentionPlugin()
+  
+  const { Toolbar, toolbarPlugin } = useMemo(() => {
     const toolbarPlugin = createToolbarPlugin();
-    const { MentionSuggestions } = mentionPlugin
     const { Toolbar } = toolbarPlugin
-    const plugins = [mentionPlugin, toolbarPlugin]
 
-    return { plugins, MentionSuggestions, Toolbar }
+    return { toolbarPlugin, Toolbar }
+  }, [])
+
+  const { MentionSuggestions, mentionPlugin } = useMemo(() => {
+    const mentionPlugin = createMentionPlugin()
+    const { MentionSuggestions } = mentionPlugin
+    //const plugins = [mentionPlugin]
+
+    return { MentionSuggestions, mentionPlugin }
   }, [])
  
   const onSearchChange = ({ value }) => setSuggestions(defaultSuggestionsFilter(value, mentions))
-  console.log('mention', mentions)
 
   return (
     <div className="editTextContent" onClick={focusEditor}>
@@ -40,7 +92,7 @@ const EditableText = () => {
           ref={editor}
           editorState={editorState}
           onChange={editorState => setEditorState(editorState)}
-          plugins={plugins}
+          plugins={[mentionPlugin, toolbarPlugin]}
         />
         <MentionSuggestions
           open={open}
@@ -48,7 +100,23 @@ const EditableText = () => {
           suggestions={suggestions}
           onSearchChange={onSearchChange}
         />
-        <Toolbar className='test' />
+        <Toolbar>
+            {
+              // may be use React.Fragment instead of div to improve perfomance after React 16
+              (externalProps) => {
+                return (
+                <div>
+                  <BoldButton {...externalProps} />
+                  <ItalicButton {...externalProps} />
+                  <UnderlineButton {...externalProps} />
+                  <CodeButton {...externalProps} />
+                  <Separator {...externalProps} />
+                  <HeadlinesButton {...externalProps} />
+                  <UnorderedListButton {...externalProps} />
+                </div>
+              )}
+            }
+          </Toolbar>
       </div> 
       <button>
         Send
