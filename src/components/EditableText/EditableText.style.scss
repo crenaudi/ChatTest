@@ -1,0 +1,35 @@
+@import '../../index.scss';
+
+.editTextContent {
+  margin: 2rem;
+
+  .editor {
+    color: var(--color-fluo-green);
+    background: var(--color-black);
+    cursor: text;
+    padding: 1rem;
+    border-radius: .2rem;
+
+    .DraftEditor-root,
+    .DraftEditor-editorContainer {
+      display: block;
+
+      div {
+        display: block;
+      }
+    }
+
+    div {
+      display: flex;
+    }np
+
+    button {
+      margin-right: .5rem;
+    }
+  }
+
+  button {
+    margin-top: 1rem;
+    cursor: pointer;
+  }
+}

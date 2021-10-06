@@ -1,0 +1,9 @@
+.main {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  max-width: 1024px;
+  margin: 0 auto;
+  background-color: var(--color-dark-grey);
+}
