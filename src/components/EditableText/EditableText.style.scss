@@ -6,6 +6,7 @@
   .editor {
     color: var(--color-fluo-green);
     background: var(--color-black);
+    border: 1px solid var(--color-fluo-green);
     cursor: text;
     padding: 1rem;
     border-radius: .2rem;
@@ -17,7 +18,7 @@
       border-radius: none;
       box-shadow: none;
       border: none;
-      margin-bottom: .5rem;
+      margin-bottom: 1rem;
 
       div {
         display: block;
@@ -30,11 +31,26 @@
 
     div {
       display: flex;
-      background-color: var(--color-dark-grey);
-      border-radius: 4px;
-      border: 1px solid var(--color-black);
-      overflow: hidden;
-      
+      margin-bottom: .6rem;
+
+      //background-color: var(--color-dark-grey);
+      //border: 1px solid var(--color-black);
+
+      .ul {
+        position: relative;
+        margin-right: .6rem;
+
+        &:hover {
+          .cubeContainer {
+            .threeDCube {
+              .right { box-shadow: -.2rem .2rem 2rem #BEFF0A; }
+              .left { box-shadow: -.2rem .2rem 2rem #BEFF0A; }
+              .back { box-shadow: -.15rem .15rem 1.6rem #BEFF0A; }
+            }
+          }
+        }
+      }
+
       div {
         display: flex;
         background: none;
@@ -45,18 +61,47 @@
         padding: 0;
 
         button {
-          margin-top: 0;
-          padding-top: .5rem;
-          background-color: var(--color-dark-grey);
+          z-index: 1;
+          width: 100%;
+          height: 2rem;
+          position:absolute;
+          background-color: transparent;
           border: none;
-          fill: var(--color-fluo-green);
+          margin-top: .4rem;
+          fill: var(--color-dark-green);
+
+          &:hover {
+            fill: var(--color-fluo-green);
+          }
+
+          svg {
+            width: 1.2rem;
+            height: 1.2rem;
+          }
         }
       }
     }
   }
 
-  button {
+  .send {
     margin-top: 1rem;
     cursor: pointer;
+    color: var(--color-dark-green);
+    background: var(--color-medium-green);
+    border: none;
+    border-radius: .2rem;
+    transition: .1s ease-out;
+    padding: .4rem .6rem;
+    font-family: var(--font);
+    font-weight: bold;
+    box-shadow: inset .2rem .2rem .4rem var(--color-fluo-green),
+      inset -.1rem -.1rem .2rem var(--color-dark-green),
+      0 0 1rem var(--color-dark-green);
+    border: 1px solid var(--color-black);
+
+    &:hover {
+      box-shadow: inset .2rem .2rem .4rem var(--color-dark-green),
+      inset -.1rem -.1rem .2rem var(--color-fluo-green);
+    }
   }
 }

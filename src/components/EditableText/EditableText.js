@@ -18,6 +18,7 @@ import createMentionPlugin, {
   defaultSuggestionsFilter,
 } from '@draft-js-plugins/mention'
 import mentions from "./partials/mentions";
+import ThreeDCube from '../3DCube/3DCube'
 
 import './EditableText.style.scss'
 
@@ -41,7 +42,6 @@ const HeadlinesPicker = (props) => {
     return (
       <div>
         {buttons.map((Button, i) => (
-          // eslint-disable-next-line
           <Button key={i} { ...props } />
         ))}
       </div>
@@ -52,8 +52,7 @@ const HeadlinesButton = (props) => {
   const onClick = () => props.onOverrideContent(HeadlinesPicker);
 
   return (
-    <div className=''>
-    </div>
+    <></>
   )
 }
 
@@ -101,25 +100,40 @@ const EditableText = () => {
           onSearchChange={onSearchChange}
         />
         <Toolbar>
-            {
-              // may be use React.Fragment instead of div to improve perfomance after React 16
-              (externalProps) => {
-                return (
-                <div>
+          {
+            // may be use React.Fragment instead of div to improve perfomance after React 16
+            (externalProps) => {
+              return (
+              <div>
+                <div className="ul">
                   <BoldButton {...externalProps} />
-                  <ItalicButton {...externalProps} />
-                  <UnderlineButton {...externalProps} />
-                  <CodeButton {...externalProps} />
-                  <Separator {...externalProps} />
-                  <HeadlinesButton {...externalProps} />
-                  <UnorderedListButton {...externalProps} />
+                  <ThreeDCube />
                 </div>
-              )}
-            }
-          </Toolbar>
-      </div> 
-      <button>
-        Send
+                <div className="ul">
+                  <ItalicButton {...externalProps} />
+                  <ThreeDCube />
+                </div>
+                <div className="ul">
+                  <UnderlineButton {...externalProps} />
+                  <ThreeDCube />
+                </div>
+                <div className="ul">
+                  <CodeButton {...externalProps} />
+                  <ThreeDCube />
+                </div>
+                <Separator {...externalProps} />
+                <HeadlinesButton {...externalProps} />
+                <div className="ul">
+                  <UnorderedListButton {...externalProps} />
+                  <ThreeDCube />
+                </div>
+              </div>
+            )}
+          }
+        </Toolbar>
+      </div>
+      <button className="send">
+        send
       </button>
     </div>
   )

@@ -1,5 +1,7 @@
 @import './_colors.scss';
 @import './_main.scss';
+@import './3D/cube.scss';
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
 
 :root {
   color-scheme: light dark;
@@ -10,7 +12,10 @@
   --color-medium-grey: #333533;
   --color-light-grey: #e5e6e4;
   --color-fluo-green: #beff0a;
+  --color-medium-green: #A3D909;
+  --color-dark-green: #394D03;
   --color-fluo-red: red;
+  --font: 'Josefin Sans', sans-serif;
 }
 
 body {
