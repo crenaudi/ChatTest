@@ -1,0 +1,16 @@
+@import '../../index.scss';
+
+.chatContainer {
+  .contain {
+    min-height: 2rem;
+    background: var(--color-black);
+    border: 1px solid #000;
+    margin: 2rem;
+    padding: 1rem;
+
+    color: var(--color-light-grey);
+    font-family: var(--font);
+    font-size: 1.1rem;
+    font-weight: 100;
+  }
+}

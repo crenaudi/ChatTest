@@ -4,7 +4,7 @@ import {
   Route,
   Link,
 } from "react-router-dom";
-import EditableText from "./components/EditableText/EditableText";
+import Chat from "./components/Chat/Chat"
 import Background from "./components/Background";
 
 import './index.scss'
@@ -17,7 +17,7 @@ function App() {
         <Link to="/about" />
         <Switch>
           <Route exact path="/">
-            <EditableText />
+            <Chat />
           </Route>
           <Route path="/about">
             <Background />
