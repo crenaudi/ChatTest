@@ -1,63 +1,65 @@
-import React, { useCallback, useRef, useMemo, useState } from "react"
-import { EditorState } from 'draft-js';
+import React, { useCallback, useRef, useMemo, useState, useEffect } from "react"
+import { EditorState, Modifier, SelectionState, ContentState, RichUtils } from 'draft-js';
 import Editor from '@draft-js-plugins/editor';
-import createToolbarPlugin, {
-  Separator,
-} from '@draft-js-plugins/static-toolbar';
+import createToolbarPlugin, { Separator } from '@draft-js-plugins/static-toolbar';
 import {
   ItalicButton,
   BoldButton,
   UnderlineButton,
   CodeButton,
-  HeadlineOneButton,
-  HeadlineTwoButton,
-  HeadlineThreeButton,
   UnorderedListButton
 } from '@draft-js-plugins/buttons';
-import createMentionPlugin, {
-  defaultSuggestionsFilter,
-} from '@draft-js-plugins/mention'
+import createMentionPlugin, { defaultSuggestionsFilter } from '@draft-js-plugins/mention'
 import mentions from "./partials/mentions";
-import ThreeDCube from '../3DCube/3DCube'
+import ThreeDCube from '../3DCube/3DCube';
 
 import './EditableText.style.scss'
+import { convertToRaw } from "draft-js";
 
-const HeadlinesPicker = (props) => {
-  //componentDidMount() {
-  //  setTimeout(() => {
-  //    window.addEventListener('click', this.onWindowClick);
-  //  });
-  //}
-//
-  //componentWillUnmount() {
-  //  window.removeEventListener('click', this.onWindowClick);
-  //}
 
-  //onWindowClick = () =>
-  //  // Call `onOverrideContent` again with `undefined`
-  //  // so the toolbar can show its regular content again.
-  //  props.onOverrideContent(undefined);
-
-    const buttons = [HeadlineOneButton, HeadlineTwoButton, HeadlineThreeButton];
-    return (
-      <div>
-        {buttons.map((Button, i) => (
-          <Button key={i} { ...props } />
-        ))}
-      </div>
-    )
+// https://github.com/jpuri/draftjs-utils/blob/master/js/block.js
+const removeSelectedBlocksStyle = (editorState)  => {
+  const newContentState = RichUtils.tryToRemoveBlockStyle(editorState);
+  if (newContentState) {
+      return EditorState.push(editorState, newContentState, 'change-block-type');
+  }
+  return editorState;
 }
 
+// https://github.com/jpuri/draftjs-utils/blob/master/js/block.js
+export const getResetEditorState = (editorState) => {
+  const blocks = editorState
+      .getCurrentContent()
+      .getBlockMap()
+      .toList();
+  const updatedSelection = editorState.getSelection().merge({
+      anchorKey: blocks.first().get('key'),
+      anchorOffset: 0,
+      focusKey: blocks.last().get('key'),
+      focusOffset: blocks.last().getLength(),
+  });
+  const newContentState = Modifier.removeRange(
+      editorState.getCurrentContent(),
+      updatedSelection,
+      'forward'
+  );
+
+  const newState = EditorState.push(editorState, newContentState, 'remove-range');
+  return removeSelectedBlocksStyle(newState)
+}
+
+
+
 const HeadlinesButton = (props) => {
-  const onClick = () => props.onOverrideContent(HeadlinesPicker);
 
   return (
     <></>
   )
 }
 
-const EditableText = () => {
-  const [editorState, setEditorState] = React.useState(EditorState.createEmpty())
+const EditableText = ({ sendClick }) => {
+  const [editorState, setEditorState] = useState(EditorState.createEmpty())
+  const [reset, setReset] = useState(false)
   const editor = useRef(null);
   const focusEditor = useCallback(() => editor.current.focus(), [editor])
 
@@ -83,6 +85,23 @@ const EditableText = () => {
  
   const onSearchChange = ({ value }) => setSuggestions(defaultSuggestionsFilter(value, mentions))
 
+  const onSendClick = () => {
+    setReset(true)
+    sendClick(JSON.stringify(convertToRaw(editorState.getCurrentContent())))
+  }
+
+  const edit = value => {
+    setEditorState(value)
+  }
+
+  useEffect(() => {
+      if (reset) {
+        const test = getResetEditorState(editorState)
+        setEditorState(test)
+        setReset(false)
+      }
+    }, [reset])
+
   return (
     <div className="editTextContent" onClick={focusEditor}>
       <div className="editor">
@@ -90,7 +109,7 @@ const EditableText = () => {
           className='re'
           ref={editor}
           editorState={editorState}
-          onChange={editorState => setEditorState(editorState)}
+          onChange={edit}
           plugins={[mentionPlugin, toolbarPlugin]}
         />
         <MentionSuggestions
@@ -132,7 +151,7 @@ const EditableText = () => {
           }
         </Toolbar>
       </div>
-      <button className="send">
+      <button className="send" onClick={onSendClick}>
         send
       </button>
     </div>

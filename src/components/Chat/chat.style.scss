@@ -1,11 +1,21 @@
 @import '../../index.scss';
 
 .chatContainer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  
+  margin: 0 auto;
+  background-color: var(--color-dark-grey);
+  width: 900px;
+  padding: 2rem;
+
   .contain {
     min-height: 2rem;
     background: var(--color-black);
     border: 1px solid #000;
-    margin: 2rem;
+    margin-bottom: 2rem;
     padding: 1rem;
 
     color: var(--color-light-grey);
