@@ -10,10 +10,12 @@ import {
   UnorderedListButton
 } from '@draft-js-plugins/buttons';
 import createMentionPlugin, { defaultSuggestionsFilter } from '@draft-js-plugins/mention'
-import { mentions, Entry } from "./partials/mentions";
+import { Entry } from "./partials/mentions";
+import { mentions } from "../../constants/mentions";
 import ThreeDCube from '../3DCube/3DCube';
 import { convertToRaw } from "draft-js";
 import { getResetEditorState } from "../../utils/getResetEditorState";
+import { AiOutlineGif } from "react-icons/ai";
 
 import './EditableText.style.scss'
 
@@ -52,6 +54,7 @@ const EditableText = ({ sendClick }) => {
 
   const onSendClick = () => {
     setReset(true)
+    console.log(convertToRaw(editorState.getCurrentContent()))
     sendClick(JSON.stringify(convertToRaw(editorState.getCurrentContent())))
   }
 
@@ -61,8 +64,8 @@ const EditableText = ({ sendClick }) => {
 
   useEffect(() => {
       if (reset) {
-        const test = getResetEditorState(editorState)
-        setEditorState(test)
+        const resetEditor = getResetEditorState(editorState)
+        setEditorState(resetEditor)
         setReset(false)
       }
     }, [reset])
@@ -108,10 +111,14 @@ const EditableText = ({ sendClick }) => {
                   <CodeButton {...externalProps} />
                   <ThreeDCube />
                 </div>
-                <Separator {...externalProps} />
-                <HeadlinesButton {...externalProps} />
                 <div className="ul">
                   <UnorderedListButton {...externalProps} />
+                  <ThreeDCube />
+                </div>
+                <div className="ul">
+                  <button>
+                    <AiOutlineGif />
+                  </button>
                   <ThreeDCube />
                 </div>
               </div>

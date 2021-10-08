@@ -96,15 +96,18 @@
           background-color: transparent;
           border: none;
           margin-top: .4rem;
-          fill: var(--color-dark-green);
-
-          &:hover {
-            fill: var(--color-fluo-green);
-          }
+          cursor: pointer;
 
           svg {
+            fill: var(--color-blackn);
             width: 1.2rem;
             height: 1.2rem;
+          }
+
+          &:hover {
+            svg {
+              fill: var(--color-fluo-green);
+            } 
           }
         }
       }
