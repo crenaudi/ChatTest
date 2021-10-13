@@ -60,33 +60,13 @@
       }
     }
 
-    div {
+    .customTools {
       display: flex;
       margin-bottom: .6rem;
 
-      .ul {
+      .tool {
         position: relative;
         margin-right: .6rem;
-
-        &:hover {
-          .cubeContainer {
-            .threeDCube {
-              .right { box-shadow: -.2rem .2rem 2rem #BEFF0A; }
-              .left { box-shadow: -.2rem .2rem 2rem #BEFF0A; }
-              .back { box-shadow: -.15rem .15rem 1.6rem #BEFF0A; }
-            }
-          }
-        }
-      }
-
-      div {
-        display: flex;
-        background: none;
-        border-radius: none;
-        box-shadow: none;
-        border: none;
-        margin: 0;
-        padding: 0;
 
         button {
           z-index: 1;
@@ -96,18 +76,38 @@
           background-color: transparent;
           border: none;
           margin-top: .4rem;
+          margin-left: -.15rem;
           cursor: pointer;
+          transition: .6s ease-in-out;
 
           svg {
-            fill: var(--color-blackn);
+            fill: var(--color-black);
             width: 1.2rem;
             height: 1.2rem;
           }
-
+          
           &:hover {
+            margin-top: .25rem;
+            margin-left: .1rem;
+
             svg {
               fill: var(--color-fluo-green);
             } 
+          }
+        }
+
+        &:hover {
+
+          .cubeContainer {
+            .threeDCube {
+              perspective-origin: 60% calc(90% - 2rem);
+              margin-bottom: .4rem;
+
+              .right { box-shadow: -.2rem .2rem 2rem #BEFF0A; }
+              .left { box-shadow: -.2rem .2rem 2rem #BEFF0A; }
+              .back { box-shadow: -.15rem .15rem 1.6rem #BEFF0A; }
+              
+            }
           }
         }
       }

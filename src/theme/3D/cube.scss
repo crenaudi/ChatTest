@@ -10,9 +10,10 @@
     height: 1.6rem;
 
     perspective: 10rem;
-    perspective-origin: 60% calc(60% - 2rem);
+    perspective-origin: 160% calc(60% - 2rem);
   
     position: absolute;
+    transition: .6s ease-in-out;
   
     .left, .right, .front, .back {
       position: absolute;

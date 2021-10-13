@@ -1,32 +1,18 @@
 import React, { useCallback, useRef, useMemo, useState, useEffect } from "react"
 import { EditorState } from 'draft-js';
 import Editor from '@draft-js-plugins/editor';
-import createToolbarPlugin, { Separator } from '@draft-js-plugins/static-toolbar';
-import {
-  ItalicButton,
-  BoldButton,
-  UnderlineButton,
-  CodeButton,
-  UnorderedListButton
-} from '@draft-js-plugins/buttons';
+import createToolbarPlugin from '@draft-js-plugins/static-toolbar';
 import createMentionPlugin, { defaultSuggestionsFilter } from '@draft-js-plugins/mention'
 import { Entry } from "./partials/mentions";
 import { mentions } from "../../constants/mentions";
-import ThreeDCube from '../3DCube/3DCube';
-import { convertToRaw } from "draft-js";
-import { getResetEditorState } from "../../utils/getResetEditorState";
-import { AiOutlineGif } from "react-icons/ai";
+import { reduceRenderEdit } from '../../utils/reduceRenderEdit';
+import { toolBarCustom } from "./partials/toolBarCustom";
 
 import './EditableText.style.scss'
 
-const HeadlinesButton = (props) => {
-  return (
-    <></>
-  )
-}
-
 const EditableText = ({ sendClick }) => {
   const [editorState, setEditorState] = useState(EditorState.createEmpty())
+  const [mentionState, setMentionState] = useState([])
   const [reset, setReset] = useState(false)
   const editor = useRef(null);
   const focusEditor = useCallback(() => editor.current.focus(), [editor])
@@ -35,7 +21,7 @@ const EditableText = ({ sendClick }) => {
   const [open, setOpen] = useState(false);
   const onOpenChange = useCallback(() => setOpen(!open), [open, setOpen])
   const [suggestions, setSuggestions] = useState(mentions);
-  
+
   const { Toolbar, toolbarPlugin } = useMemo(() => {
     const toolbarPlugin = createToolbarPlugin();
     const { Toolbar } = toolbarPlugin
@@ -49,23 +35,30 @@ const EditableText = ({ sendClick }) => {
 
     return { MentionSuggestions, mentionPlugin }
   }, [])
- 
-  const onSearchChange = ({ value }) => setSuggestions(defaultSuggestionsFilter(value, mentions))
 
-  const onSendClick = () => {
+  const onSearchChange = useCallback(({ value }) => setSuggestions(defaultSuggestionsFilter(value, mentions)), [setSuggestions])
+
+  const onSendClick = useCallback(() => {
     setReset(true)
-    console.log(convertToRaw(editorState.getCurrentContent()))
-    sendClick(JSON.stringify(convertToRaw(editorState.getCurrentContent())))
-  }
+    sendClick({ editorState })
+  }, [setReset, reduceRenderEdit, sendClick, editorState])
 
-  const edit = value => {
+  const onAddMention = useCallback((value) => {
+    if (mentionState.length > 0 && mentionState.map(item => item.name).filter((name => name === value.name)).length > 0) {
+      return
+    }
+    setMentionState([...mentionState, value])
+  }, [setMentionState, mentionState])
+
+  const edit = useCallback((value) => {
     setEditorState(value)
-  }
+  }, [setEditorState])
 
   useEffect(() => {
       if (reset) {
-        const resetEditor = getResetEditorState(editorState)
+        const resetEditor = EditorState.createEmpty()
         setEditorState(resetEditor)
+        setMentionState([])
         setReset(false)
       }
     }, [reset])
@@ -86,44 +79,11 @@ const EditableText = ({ sendClick }) => {
           suggestions={suggestions}
           onSearchChange={onSearchChange}
           entryComponent={Entry}
-          onAddMention={(value) => console.log(value)}
+          onAddMention={onAddMention}
           popoverContainer={({ children }) => <div className="mentionContainer">{children}</div>}
         />
         <Toolbar>
-          {
-            // may be use React.Fragment instead of div to improve perfomance after React 16
-            (externalProps) => {
-              return (
-              <div>
-                <div className="ul">
-                  <BoldButton {...externalProps} />
-                  <ThreeDCube />
-                </div>
-                <div className="ul">
-                  <ItalicButton {...externalProps} />
-                  <ThreeDCube />
-                </div>
-                <div className="ul">
-                  <UnderlineButton {...externalProps} />
-                  <ThreeDCube />
-                </div>
-                <div className="ul">
-                  <CodeButton {...externalProps} />
-                  <ThreeDCube />
-                </div>
-                <div className="ul">
-                  <UnorderedListButton {...externalProps} />
-                  <ThreeDCube />
-                </div>
-                <div className="ul">
-                  <button>
-                    <AiOutlineGif />
-                  </button>
-                  <ThreeDCube />
-                </div>
-              </div>
-            )}
-          }
+          {(externalProps) => toolBarCustom(externalProps)}
         </Toolbar>
       </div>
       <button className="send" onClick={onSendClick}>
